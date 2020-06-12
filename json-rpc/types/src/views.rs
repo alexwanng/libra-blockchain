@@ -465,15 +465,11 @@ impl From<TransactionPayload> for ScriptView {
                     Err(format_err!("Unable to parse PeerToPeer arguments"))
                 }
             }
-            name @ "mint" | name @ "mint_lbr_to_address" => {
+            name @ "mint" => {
                 if let [TransactionArgument::Address(receiver), TransactionArgument::U8Vector(auth_key_prefix), TransactionArgument::U64(amount)] =
                     &args[..]
                 {
-                    let currency = if name == "mint_lbr_to_address" {
-                        LBR_NAME.to_string()
-                    } else {
-                        ty_args.get(0).unwrap_or(&unknown_currency).to_string()
-                    };
+                    let currency = ty_args.get(0).unwrap_or(&unknown_currency).to_string();
                     Ok(ScriptView::Mint {
                         receiver: receiver.to_string(),
                         auth_key_prefix: BytesView::from(auth_key_prefix),
